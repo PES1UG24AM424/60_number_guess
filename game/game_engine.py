@@ -14,6 +14,9 @@ class GameEngine:
         self.min_range = 1
         self.max_range = 100
 
+        # Task 3: Recent guess history
+        self.guess_history = []
+
         self.feedback_msg = "Enter a number between 1 and 100"
         self.feedback_color = (220, 220, 220)
         self.game_won = False
@@ -40,6 +43,10 @@ class GameEngine:
         self.attempts += 1
         self.input_box.clear()
 
+        # Task 3: Add guess to recent history
+        self.guess_history.append(guess)
+        self.guess_history = self.guess_history[-5:]
+
         if guess < self.secret_number:
             self.feedback_msg = f"TOO LOW! (Guess was {guess})"
             self.feedback_color = (80, 160, 240)
@@ -64,6 +71,7 @@ class GameEngine:
         self.attempts = 0
         self.min_range = 1
         self.max_range = 100
+        self.guess_history = []
         self.feedback_msg = "Enter a number between 1 and 100"
         self.feedback_color = (220, 220, 220)
         self.game_won = False
@@ -91,8 +99,15 @@ class GameEngine:
         title_surf = self.font_title.render("Number Guessing Arena", True, (245, 245, 245))
         screen.blit(title_surf, (self.width // 2 - title_surf.get_width() // 2, 35))
 
-        attempts_surf = self.font_medium.render(f"Attempts: {self.attempts}", True, (180, 185, 195))
-        screen.blit(attempts_surf, (self.width // 2 - attempts_surf.get_width() // 2, 95))
+        attempts_surf = self.font_medium.render(
+            f"Attempts: {self.attempts}",
+            True,
+            (180, 185, 195)
+        )
+        screen.blit(
+            attempts_surf,
+            (self.width // 2 - attempts_surf.get_width() // 2, 95)
+        )
 
         # Task 2: Display current possible range
         range_surf = self.font_medium.render(
@@ -108,19 +123,53 @@ class GameEngine:
         self.input_box.render(screen)
 
         pygame.draw.rect(screen, (50, 150, 80), self.submit_btn, border_radius=6)
-        pygame.draw.rect(screen, (220, 220, 220), self.submit_btn, width=2, border_radius=6)
+        pygame.draw.rect(
+            screen,
+            (220, 220, 220),
+            self.submit_btn,
+            width=2,
+            border_radius=6
+        )
 
         btn_text = self.font_btn.render("SUBMIT", True, (255, 255, 255))
         screen.blit(
             btn_text,
-            (self.submit_btn.centerx - btn_text.get_width() // 2,
-             self.submit_btn.centery - btn_text.get_height() // 2),
+            (
+                self.submit_btn.centerx - btn_text.get_width() // 2,
+                self.submit_btn.centery - btn_text.get_height() // 2
+            )
         )
 
-        feedback_surf = self.font_medium.render(self.feedback_msg, True, self.feedback_color)
+        feedback_surf = self.font_medium.render(
+            self.feedback_msg,
+            True,
+            self.feedback_color
+        )
         screen.blit(
             feedback_surf,
-            (self.width // 2 - feedback_surf.get_width() // 2, 235)
+            (
+                self.width // 2 - feedback_surf.get_width() // 2,
+                235
+            )
+        )
+
+        # Task 3: Display recent guess history
+        history_text = "Recent guesses: " + ", ".join(
+            str(g) for g in self.guess_history
+        )
+
+        history_surf = self.font_medium.render(
+            history_text,
+            True,
+            (190, 200, 210)
+        )
+
+        screen.blit(
+            history_surf,
+            (
+                self.width // 2 - history_surf.get_width() // 2,
+                340
+            )
         )
 
         if self.game_won:
@@ -131,5 +180,8 @@ class GameEngine:
             )
             screen.blit(
                 restart_surf,
-                (self.width // 2 - restart_surf.get_width() // 2, 295)
+                (
+                    self.width // 2 - restart_surf.get_width() // 2,
+                    295
+                )
             )
